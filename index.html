@@ -126,7 +126,7 @@
   }
   .hero .container {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1.3fr 0.7fr;
     gap: 40px;
     align-items: center;
   }
@@ -201,9 +201,9 @@
     height: auto;
   }
   .hero-img {
-    width: 100%;
-    max-width: 360px;
-    height: auto;
+    width: auto;
+    max-width: 100%;
+    max-height: 480px;
     object-fit: contain;
   }
 
@@ -461,6 +461,7 @@
     }
     .hero-illustration { order: -1; margin-bottom: 10px; }
     .hero-illustration svg { max-width: 260px; }
+    .hero-img { max-height: 340px; }
     .hero-links { justify-content: center; }
     .hero-sub { margin-left: auto; margin-right: auto; }
   }
