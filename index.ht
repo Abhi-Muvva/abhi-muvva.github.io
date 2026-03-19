@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhi Muvva — Quantum Computing Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-card-hover: #181825;
+    --border-subtle: rgba(100, 220, 255, 0.08);
+    --border-glow: rgba(100, 220, 255, 0.25);
+    --accent: #64dcff;
+    --accent-dim: rgba(100, 220, 255, 0.15);
+    --accent-warm: #a78bfa;
+    --text-primary: #e8eaf0;
+    --text-secondary: #8b8fa3;
+    --text-dim: #555770;
+    --tag-bg: rgba(100, 220, 255, 0.08);
+    --tag-border: rgba(100, 220, 255, 0.15);
+    --gradient-glow: radial-gradient(ellipse 600px 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 220, 255, 0.04), transparent);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-dim) transparent;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* --- Grain overlay --- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* --- Ambient glow blobs --- */
+  .ambient {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ambient-1 {
+    width: 500px; height: 500px;
+    background: rgba(100, 220, 255, 0.035);
+    top: -10%; left: -5%;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  .ambient-2 {
+    width: 400px; height: 400px;
+    background: rgba(167, 139, 250, 0.03);
+    bottom: 10%; right: -5%;
+    animation: drift 25s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes drift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 30px); }
+  }
+
+  /* --- Layout --- */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* --- Nav --- */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10, 10, 15, 0.75);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  nav .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* --- Hero --- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 60px;
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s forwards;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+  }
+  .hero-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 36px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .hero-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-primary);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 24px rgba(100, 220, 255, 0.3);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    border: 1px solid var(--border-glow);
+    color: var(--accent);
+  }
+  .btn-ghost:hover {
+    background: var(--accent-dim);
+  }
+
+  /* --- Section headers --- */
+  section { padding: 100px 0 40px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+
+  /* --- Project cards --- */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 28px;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-glow);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+  .card:hover {
+    border-color: var(--border-glow);
+    background: var(--bg-card-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(100, 220, 255, 0.06);
+  }
+  .card:hover::before { opacity: 1; }
+  .card-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .card-status.completed { color: #34d399; background: rgba(52, 211, 153, 0.12); }
+  .card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    position: relative;
+  }
+  .card p {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: relative;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .tag.purple {
+    background: rgba(167, 139, 250, 0.1);
+    border-color: rgba(167, 139, 250, 0.2);
+    color: var(--accent-warm);
+  }
+
+  /* --- Experience timeline --- */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--text-dim), transparent);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -29px; top: 8px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(100, 220, 255, 0.4);
+  }
+  .timeline-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .timeline-item h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .timeline-item .org {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  .timeline-item p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    max-width: 600px;
+  }
+
+  /* --- Skills --- */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .skill-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.3s;
+  }
+  .skill-group:hover { border-color: var(--border-glow); }
+  .skill-group h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .skill-group .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .skill-tag {
+    font-size: 0.82rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.2s;
+  }
+  .skill-tag:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--tag-border);
+  }
+
+  /* --- Education --- */
+  .edu-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .edu-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 28px;
+    transition: border-color 0.3s;
+  }
+  .edu-card:hover { border-color: var(--border-glow); }
+  .edu-card .degree {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .edu-card .school {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+  .edu-card .dates {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+  .edu-card .gpa {
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  /* --- Contact --- */
+  .contact-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.25s;
+  }
+  .contact-link:hover {
+    border-color: var(--border-glow);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+  }
+  .contact-link .icon {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  /* --- Footer --- */
+  footer {
+    border-top: 1px solid var(--border-subtle);
+    padding: 32px 0;
+    margin-top: 80px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  /* --- Animations --- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 640px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 0.75rem; }
+    .hero h1 { font-size: 2.4rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .edu-cards { grid-template-columns: 1fr; }
+    section { padding: 70px 0 30px; }
+    .contact-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Ambient glow -->
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="container">
+    <div class="nav-logo">AM</div>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-label">Quantum Computing Researcher</div>
+    <h1>Abhi <span class="accent">Muvva</span></h1>
+    <p class="hero-sub">
+      MS Physics–Quantum Computing at UW–Madison. Building at the intersection of quantum algorithms, error mitigation, and near-term hardware.
+    </p>
+    <div class="hero-links">
+      <a href="#projects" class="btn-primary">View Projects ↓</a>
+      <a href="mailto:muvvabhi@gmail.com" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Research & Projects</div>
+      <h2 class="section-title">What I've Built</h2>
+    </div>
+    <div class="projects-grid">
+
+      <div class="card reveal">
+        <span class="card-status">Ongoing</span>
+        <h3>Adaptive Active Space Selection in Quantum Flow Algorithms</h3>
+        <p>Replicated QFlow(4e,4o) from scratch achieving &lt;0.1 mHa error on H₆/H₈ benchmarks. Designing extensions with gradient-norm-driven active-space pruning and ADMM consensus coupling.</p>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">PySCF</span>
+          <span class="tag">PennyLane</span>
+          <span class="tag purple">Quantum Chemistry</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status">Ongoing</span>
+        <h3>HGQA: Hybrid Quantum-Classical EVCS Optimizer</h3>
+        <p>Six-term QUBO formulation with a three-tier cell pruner reducing qubit count 50–99% pre-QAOA. MPS-based simulation scaling to 80–100+ qubits.</p>
+        <div class="card-tags">
+          <span class="tag">Qiskit</span>
+          <span class="tag">QAOA</span>
+          <span class="tag">Qiskit Aer</span>
+          <span class="tag purple">Optimization</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status completed">Completed</span>
+        <h3>Neutral-Atom Quantum Processor Simulator</h3>
+        <p>Pulse-level simulator with four-level atomic model under Lindblad master equation. Validated via randomized benchmarking and interleaved RB.</p>
+        <div class="card-tags">
+          <span class="tag">QuTiP</span>
+          <span class="tag">Qiskit</span>
+          <span class="tag">Python</span>
+          <span class="tag purple">Hardware Sim</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status completed">Completed</span>
+        <h3>Zero-Noise Extrapolation with Randomized Benchmarking</h3>
+        <p>Unified RB+ZNE protocol for superconducting qubits at Qolab (co-founded by John M. Martinis). Digital Clifford folding for X/Y gates and analog pulse stretching for Z rotations.</p>
+        <div class="card-tags">
+          <span class="tag">QUA</span>
+          <span class="tag">Python</span>
+          <span class="tag purple">Error Mitigation</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status completed">Completed</span>
+        <h3>QML Encoding Trade-offs in Qrisp</h3>
+        <p>Systematic comparison of QuantumFloat, angle, and amplitude encodings on Iris dataset. Built centroid-based and kNN quantum classifiers to benchmark practical encoding efficiency.</p>
+        <div class="card-tags">
+          <span class="tag">Qrisp</span>
+          <span class="tag">Qiskit</span>
+          <span class="tag">PennyLane</span>
+          <span class="tag purple">QML</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status completed">Completed</span>
+        <h3>WISQ Compiler Enhancement</h3>
+        <p>Verification and resource estimation modules for circuit correctness. Hellinger fidelity validation and T-gate cost analysis via Qsharp-Estimator.</p>
+        <div class="card-tags">
+          <span class="tag">Qiskit</span>
+          <span class="tag">Q#</span>
+          <span class="tag purple">Compilers</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section id="experience">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Experience</div>
+      <h2 class="section-title">Where I've Worked</h2>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">Apr 2025 — Present</div>
+        <h3>Graduate Researcher</h3>
+        <div class="org">University of Wisconsin–Madison · Dr. Matthew Otten</div>
+        <p>Independent replication of QFlow quantum flow algorithm. Designing novel extensions including gradient-norm-driven active-space pruning and ADMM consensus coupling.</p>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">Jul 2023 — Oct 2023</div>
+        <h3>Visiting Student Researcher — CyberVSR</h3>
+        <div class="org">Rochester Institute of Technology · Dr. Ahmed Hamza</div>
+        <p>WGAN-GP based password guessing model. Collected and processed leaked-password datasets with semantic and syntactic validation modules.</p>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">Jun 2023 — Jul 2023</div>
+        <h3>Research Intern</h3>
+        <div class="org">QMatter Labs · Hyderabad</div>
+        <p>Hybrid classical–quantum genetic algorithm for EV charging station placement. Grid-based QUBO encoding for scalable area-level optimization.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Education -->
+<section id="education">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Education</div>
+      <h2 class="section-title">Background</h2>
+    </div>
+    <div class="edu-cards">
+      <div class="edu-card reveal">
+        <div class="degree">MS Physics — Quantum Computing</div>
+        <div class="school">University of Wisconsin–Madison</div>
+        <div class="dates">Sep 2024 — Present</div>
+        <div class="gpa">GPA 3.73 / 4.00</div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="degree">BTech Artificial Intelligence</div>
+        <div class="school">Mahindra University, Hyderabad</div>
+        <div class="dates">Aug 2020 — May 2024</div>
+        <div class="gpa">GPA 7.43 / 10.00</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section id="skills">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Technical Skills</div>
+      <h2 class="section-title">Toolkit</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <h4>Quantum Frameworks</h4>
+        <div class="tags">
+          <span class="skill-tag">Qiskit</span>
+          <span class="skill-tag">Cirq</span>
+          <span class="skill-tag">PennyLane</span>
+          <span class="skill-tag">Qrisp</span>
+          <span class="skill-tag">OpenQASM3</span>
+          <span class="skill-tag">Q#</span>
+          <span class="skill-tag">Qualtran</span>
+          <span class="skill-tag">QUA</span>
+          <span class="skill-tag">openFermion</span>
+          <span class="skill-tag">QuTiP</span>
+          <span class="skill-tag">PySCF</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h4>Languages</h4>
+        <div class="tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">MATLAB</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">MySQL</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h4>ML & Scientific</h4>
+        <div class="tags">
+          <span class="skill-tag">NumPy</span>
+          <span class="skill-tag">SciPy</span>
+          <span class="skill-tag">Pandas</span>
+          <span class="skill-tag">TensorFlow</span>
+          <span class="skill-tag">Matplotlib</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h4>Dev Tools</h4>
+        <div class="tags">
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">Linux/Bash</span>
+          <span class="skill-tag">Jupyter</span>
+          <span class="skill-tag">VS Code</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Publications -->
+<section id="publications">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Publications</div>
+      <h2 class="section-title">Writing</h2>
+    </div>
+    <div class="card reveal" style="max-width: 600px;">
+      <h3>Weather Prediction Using Machine Learning Techniques</h3>
+      <p><em>International Journal of Scientific Research in Engineering and Management (IJSREM)</em>, 8(1), Jan. 2024.</p>
+      <div class="card-tags" style="margin-top: 12px;">
+        <span class="tag purple">Published</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Get in Touch</div>
+      <h2 class="section-title">Let's Connect</h2>
+    </div>
+    <div class="contact-row reveal">
+      <a href="mailto:muvvabhi@gmail.com" class="contact-link">
+        <span class="icon">✉</span> muvvabhi@gmail.com
+      </a>
+      <a href="tel:+12398515807" class="contact-link">
+        <span class="icon">☎</span> 239-851-5807
+      </a>
+      <a href="https://github.com/YOUR_GITHUB" class="contact-link" target="_blank">
+        <span class="icon">⟐</span> GitHub
+      </a>
+      <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="contact-link" target="_blank">
+        <span class="icon">◈</span> LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Built by Abhi Muvva · 2026
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
