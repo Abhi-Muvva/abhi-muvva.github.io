@@ -40,7 +40,7 @@
     overflow-x: hidden;
   }
 
-  /* --- Grain overlay --- */
+  /* Grain overlay */
   body::before {
     content: '';
     position: fixed;
@@ -50,7 +50,7 @@
     z-index: 9999;
   }
 
-  /* --- Ambient glow blobs --- */
+  /* Ambient glow */
   .ambient {
     position: fixed;
     border-radius: 50%;
@@ -75,7 +75,6 @@
     100% { transform: translate(40px, 30px); }
   }
 
-  /* --- Layout --- */
   .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -84,7 +83,7 @@
     z-index: 1;
   }
 
-  /* --- Nav --- */
+  /* Nav */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -118,13 +117,22 @@
   }
   .nav-links a:hover { color: var(--accent); }
 
-  /* --- Hero --- */
+  /* Hero */
   .hero {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    align-items: center;
     padding-top: 60px;
+  }
+  .hero .container {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero-content {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
   }
   .hero-label {
     font-family: 'JetBrains Mono', monospace;
@@ -133,34 +141,26 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.2s forwards;
   }
   .hero h1 {
-    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-size: clamp(2.8rem, 6vw, 5rem);
     font-weight: 700;
     line-height: 1.05;
     letter-spacing: -0.03em;
     margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.35s forwards;
   }
   .hero h1 .accent { color: var(--accent); }
   .hero-sub {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
-    max-width: 560px;
+    max-width: 520px;
     line-height: 1.7;
     font-weight: 300;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.5s forwards;
   }
   .hero-links {
     display: flex;
     gap: 16px;
-    margin-top: 36px;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.65s forwards;
+    margin-top: 32px;
   }
   .hero-links a {
     display: inline-flex;
@@ -185,11 +185,29 @@
     border: 1px solid var(--border-glow);
     color: var(--accent);
   }
-  .btn-ghost:hover {
-    background: var(--accent-dim);
+  .btn-ghost:hover { background: var(--accent-dim); }
+
+  /* Hero illustration */
+  .hero-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.45s forwards;
+  }
+  .hero-illustration svg {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+  }
+  .hero-img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    object-fit: contain;
   }
 
-  /* --- Section headers --- */
+  /* Sections */
   section { padding: 100px 0 40px; }
   .section-label {
     font-family: 'JetBrains Mono', monospace;
@@ -206,7 +224,7 @@
     margin-bottom: 48px;
   }
 
-  /* --- Project cards --- */
+  /* Project cards */
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -285,8 +303,21 @@
     border-color: rgba(167, 139, 250, 0.2);
     color: var(--accent-warm);
   }
+  .card-repo {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    opacity: 0.7;
+    transition: opacity 0.25s;
+    position: relative;
+  }
+  .card-repo:hover { opacity: 1; }
 
-  /* --- Experience timeline --- */
+  /* Timeline */
   .timeline { position: relative; padding-left: 32px; }
   .timeline::before {
     content: '';
@@ -315,24 +346,11 @@
     letter-spacing: 0.05em;
     margin-bottom: 6px;
   }
-  .timeline-item h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 3px;
-  }
-  .timeline-item .org {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-  }
-  .timeline-item p {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    line-height: 1.65;
-    max-width: 600px;
-  }
+  .timeline-item h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 3px; }
+  .timeline-item .org { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px; }
+  .timeline-item p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.65; max-width: 600px; }
 
-  /* --- Skills --- */
+  /* Skills */
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -354,11 +372,7 @@
     color: var(--accent);
     margin-bottom: 14px;
   }
-  .skill-group .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .skill-group .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .skill-tag {
     font-size: 0.82rem;
     padding: 5px 12px;
@@ -374,7 +388,7 @@
     border-color: var(--tag-border);
   }
 
-  /* --- Education --- */
+  /* Education */
   .edu-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -388,35 +402,13 @@
     transition: border-color 0.3s;
   }
   .edu-card:hover { border-color: var(--border-glow); }
-  .edu-card .degree {
-    font-size: 1.05rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .edu-card .school {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 2px;
-  }
-  .edu-card .dates {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    letter-spacing: 0.04em;
-  }
-  .edu-card .gpa {
-    margin-top: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
-  }
+  .edu-card .degree { font-size: 1.05rem; font-weight: 600; margin-bottom: 4px; }
+  .edu-card .school { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2px; }
+  .edu-card .dates { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-dim); }
+  .edu-card .gpa { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); }
 
-  /* --- Contact --- */
-  .contact-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+  /* Contact */
+  .contact-row { display: flex; gap: 16px; flex-wrap: wrap; }
   .contact-link {
     display: inline-flex;
     align-items: center;
@@ -441,7 +433,6 @@
     font-size: 0.85rem;
   }
 
-  /* --- Footer --- */
   footer {
     border-top: 1px solid var(--border-subtle);
     padding: 32px 0;
@@ -451,7 +442,6 @@
     font-size: 0.8rem;
   }
 
-  /* --- Animations --- */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -462,12 +452,18 @@
     transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .hero .container {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .hero-illustration { order: -1; margin-bottom: 10px; }
+    .hero-illustration svg { max-width: 260px; }
+    .hero-links { justify-content: center; }
+    .hero-sub { margin-left: auto; margin-right: auto; }
+  }
   @media (max-width: 640px) {
     .nav-links { gap: 16px; }
     .nav-links a { font-size: 0.75rem; }
@@ -482,7 +478,6 @@
 </head>
 <body>
 
-<!-- Ambient glow -->
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
 
@@ -502,14 +497,20 @@
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-label">Quantum Computing Researcher</div>
-    <h1>Abhi <span class="accent">Muvva</span></h1>
-    <p class="hero-sub">
-      MS Physics–Quantum Computing at UW–Madison. Building at the intersection of quantum algorithms, error mitigation, and near-term hardware.
-    </p>
-    <div class="hero-links">
-      <a href="#projects" class="btn-primary">View Projects ↓</a>
-      <a href="mailto:muvvabhi@gmail.com" class="btn-ghost">Get in Touch</a>
+    <div class="hero-content">
+      <div class="hero-label">Quantum Computing Researcher</div>
+      <h1>Abhi <span class="accent">Muvva</span></h1>
+      <p class="hero-sub">
+        MS Physics–Quantum Computing at UW–Madison. Building at the intersection of quantum algorithms, error mitigation, and near-term hardware.
+      </p>
+      <div class="hero-links">
+        <a href="#projects" class="btn-primary">View Projects ↓</a>
+        <a href="mailto:muvvabhi@gmail.com" class="btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <!-- Replace "avatar.png" with your actual image file -->
+      <img src="avatar.png" alt="Abhi Muvva illustration" class="hero-img" />
     </div>
   </div>
 </section>
@@ -518,7 +519,7 @@
 <section id="projects">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">Research & Projects</div>
+      <div class="section-label">Research &amp; Projects</div>
       <h2 class="section-title">What I've Built</h2>
     </div>
     <div class="projects-grid">
@@ -545,6 +546,7 @@
           <span class="tag">Qiskit Aer</span>
           <span class="tag purple">Optimization</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/HGQA" target="_blank" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -568,6 +570,7 @@
           <span class="tag">Python</span>
           <span class="tag purple">Error Mitigation</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/RB_ZNE" target="_blank" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -580,6 +583,7 @@
           <span class="tag">PennyLane</span>
           <span class="tag purple">QML</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/qrisp-quantumfloat-evaluation" target="_blank" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -605,28 +609,24 @@
       <h2 class="section-title">Where I've Worked</h2>
     </div>
     <div class="timeline">
-
       <div class="timeline-item reveal">
         <div class="timeline-date">Apr 2025 — Present</div>
         <h3>Graduate Researcher</h3>
         <div class="org">University of Wisconsin–Madison · Dr. Matthew Otten</div>
         <p>Independent replication of QFlow quantum flow algorithm. Designing novel extensions including gradient-norm-driven active-space pruning and ADMM consensus coupling.</p>
       </div>
-
       <div class="timeline-item reveal">
         <div class="timeline-date">Jul 2023 — Oct 2023</div>
         <h3>Visiting Student Researcher — CyberVSR</h3>
         <div class="org">Rochester Institute of Technology · Dr. Ahmed Hamza</div>
         <p>WGAN-GP based password guessing model. Collected and processed leaked-password datasets with semantic and syntactic validation modules.</p>
       </div>
-
       <div class="timeline-item reveal">
         <div class="timeline-date">Jun 2023 — Jul 2023</div>
         <h3>Research Intern</h3>
         <div class="org">QMatter Labs · Hyderabad</div>
         <p>Hybrid classical–quantum genetic algorithm for EV charging station placement. Grid-based QUBO encoding for scalable area-level optimization.</p>
       </div>
-
     </div>
   </div>
 </section>
@@ -689,7 +689,7 @@
         </div>
       </div>
       <div class="skill-group reveal">
-        <h4>ML & Scientific</h4>
+        <h4>ML &amp; Scientific</h4>
         <div class="tags">
           <span class="skill-tag">NumPy</span>
           <span class="skill-tag">SciPy</span>
@@ -743,7 +743,7 @@
       <a href="tel:+12398515807" class="contact-link">
         <span class="icon">☎</span> 239-851-5807
       </a>
-      <a href="https://github.com/YOUR_GITHUB" class="contact-link" target="_blank">
+      <a href="https://github.com/Abhi-Muvva" class="contact-link" target="_blank">
         <span class="icon">⟐</span> GitHub
       </a>
       <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="contact-link" target="_blank">
@@ -754,13 +754,10 @@
 </section>
 
 <footer>
-  <div class="container">
-    Built by Abhi Muvva · 2026
-  </div>
+  <div class="container">Built by Abhi Muvva · 2026</div>
 </footer>
 
 <script>
-  // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
