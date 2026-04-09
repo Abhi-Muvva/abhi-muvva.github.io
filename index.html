@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abhi Muvva — Quantum Computing Researcher</title>
+<meta name="description" content="Abhi Muvva — MS Physics (Quantum Computing) at UW–Madison. Building quantum algorithms, error mitigation, and near-term hardware solutions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
 <style>
   :root {
     --bg-primary: #0a0a0f;
@@ -18,7 +21,7 @@
     --accent-warm: #a78bfa;
     --text-primary: #e8eaf0;
     --text-secondary: #8b8fa3;
-    --text-dim: #555770;
+    --text-dim: #787c96;
     --tag-bg: rgba(100, 220, 255, 0.08);
     --tag-border: rgba(100, 220, 255, 0.15);
     --gradient-glow: radial-gradient(ellipse 600px 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 220, 255, 0.04), transparent);
@@ -40,15 +43,6 @@
     overflow-x: hidden;
   }
 
-  /* Grain overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-  }
 
   /* Ambient glow */
   .ambient {
@@ -123,16 +117,16 @@
     display: flex;
     align-items: center;
     padding-top: 60px;
+    position: relative;
   }
   .hero .container {
-    display: grid;
-    grid-template-columns: 1.3fr 0.7fr;
-    gap: 40px;
-    align-items: center;
+    display: block;
   }
   .hero-content {
     opacity: 0;
     animation: fadeUp 0.6s 0.2s forwards;
+    position: relative;
+    z-index: 1;
   }
   .hero-label {
     font-family: 'JetBrains Mono', monospace;
@@ -155,10 +149,11 @@
     color: var(--text-secondary);
     max-width: 520px;
     line-height: 1.7;
-    font-weight: 300;
+    font-weight: 400;
   }
   .hero-links {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-top: 32px;
   }
@@ -187,27 +182,31 @@
   }
   .btn-ghost:hover { background: var(--accent-dim); }
 
-  /* Hero illustration */
-  .hero-illustration {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.45s forwards;
+  /* Bloch sphere — global fixed background */
+  .bloch-bg {
+    position: fixed;
+    top: -300px;
+    right: -200px;
+    width: 720px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    transform-origin: 50% 49%;
+    /* Initial mask: south half visible (|1⟩), feathered ±20° */
+    mask-image: conic-gradient(from 0deg at 50% 49%,
+      transparent 70deg, black 90deg, black 270deg, transparent 290deg);
+    -webkit-mask-image: conic-gradient(from 0deg at 50% 49%,
+      transparent 70deg, black 90deg, black 270deg, transparent 290deg);
   }
-  .hero-illustration svg {
+  .bloch-bg svg {
     width: 100%;
-    max-width: 380px;
     height: auto;
-  }
-  .hero-img {
-    width: auto;
-    max-width: 100%;
-    max-height: 480px;
+    display: block;
   }
 
   /* Sections */
-  section { padding: 100px 0 40px; }
+  section { padding: 100px 0 60px; }
   .section-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
@@ -256,7 +255,7 @@
   .card:hover::before { opacity: 1; }
   .card-status {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent);
@@ -428,8 +427,9 @@
   }
   .contact-link .icon {
     color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
   }
 
   footer {
@@ -454,15 +454,10 @@
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
   @media (max-width: 768px) {
-    .hero .container {
-      grid-template-columns: 1fr;
-      text-align: center;
-    }
-    .hero-illustration { order: -1; margin-bottom: 10px; }
-    .hero-illustration svg { max-width: 260px; }
-    .hero-img { max-height: 340px; }
+    .bloch-bg { width: 380px; top: -160px; right: -100px; opacity: 0.05; }
     .hero-links { justify-content: center; }
     .hero-sub { margin-left: auto; margin-right: auto; }
+    .hero .container { text-align: center; }
   }
   @media (max-width: 640px) {
     .nav-links { gap: 16px; }
@@ -471,18 +466,56 @@
     .projects-grid { grid-template-columns: 1fr; }
     .skills-grid { grid-template-columns: 1fr; }
     .edu-cards { grid-template-columns: 1fr; }
-    section { padding: 70px 0 30px; }
+    section { padding: 70px 0 40px; }
     .contact-row { flex-direction: column; }
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 16px;
+    background: var(--accent);
+    color: var(--bg-primary);
+    padding: 8px 18px;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    z-index: 200;
+    transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+    .hero-content { opacity: 1; animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
   }
 </style>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
 
 <!-- Nav -->
-<nav>
+<nav aria-label="Primary navigation">
   <div class="container">
     <div class="nav-logo">AM</div>
     <div class="nav-links">
@@ -493,6 +526,8 @@
     </div>
   </div>
 </nav>
+
+<main id="main-content">
 
 <!-- Hero -->
 <section class="hero">
@@ -506,10 +541,64 @@
       <div class="hero-links">
         <a href="#projects" class="btn-primary">View Projects ↓</a>
         <a href="mailto:muvvabhi@gmail.com" class="btn-ghost">Get in Touch</a>
+        <a href="CV.pdf" target="_blank" rel="noopener noreferrer" class="btn-ghost">View CV</a>
       </div>
     </div>
-    <div class="hero-illustration">
-      <svg class="hero-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 422.868 880" role="img"><defs><linearGradient id="a-134" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0.302"/></linearGradient></defs><g transform="translate(-278.174 -144.545)"><path d="M0,0H199.792V123.035H0Z" transform="translate(401.715 144.826)" fill="#3f3d56"/><path d="M591.806,312.283a8.145,8.145,0,0,1,8.148-8.148H632.1a8.147,8.147,0,0,1,8.161,8.148v2.228H714.2V202.047H514.4V314.511h77.406Z" transform="translate(-112.976 75.845)" fill="#3f3d56"/><path d="M409.235,101.14H355.323V213.6H401.1Z" transform="translate(256.275 176.753)" fill="#3f3d56"/><path d="M735.748,123.466l-7.278,100.4H673.807V100.908h40.978a21.03,21.03,0,0,1,20.964,22.559Z" transform="translate(-62.212 43.637)" fill="#3f3d56"/><path d="M780.367,313.6l-8.715,163.936-.066,1.187-2.808,52.857a46.492,46.492,0,0,1-46.462,44.8H533.078a46.274,46.274,0,0,1-22.2-5.643c-.119-.066-.237-.132-.343-.185-1.121-.62-2.2-1.292-3.257-1.991-.264-.185-.527-.356-.791-.541a46.429,46.429,0,0,1-19.869-36.442L475.027,313.6Z" transform="translate(-125.514 88.816)" fill="#3f3d56"/><path d="M461.973,142.967l5.858,80.9h52.91V100.908H500.907l-.527,0a39.113,39.113,0,0,0-38.407,42.057Z" transform="translate(-129.707 43.637)" fill="#3f3d56"/><path d="M156.608,213.6h44.023V101.14H148.473Z" transform="translate(190.403 176.753)" fill="#3f3d56"/><path d="M9.3,0H387.039a9.3,9.3,0,0,1,9.3,9.3V15.11a9.3,9.3,0,0,1-9.3,9.3H9.3A9.3,9.3,0,0,1,0,15.11V9.3A9.3,9.3,0,0,1,9.3,0Z" transform="translate(304.704 652.99)" fill="#e6e6e6"/><path d="M678.753,109.908h.317V218.021h-.317a54.057,54.057,0,1,1,0-108.113Z" transform="translate(-77.851 46.503)" fill="#0a0a0f"/><path d="M717.171,163.709a54.091,54.091,0,0,1-43.364,53v-106a54.091,54.091,0,0,1,43.364,53Z" transform="translate(-62.212 46.758)" fill="#0a0a0f"/><path d="M503.6,320.51c7.48.351,22.951,4.066,39.716,8.868s34.928,10.672,52.87,16.473q47.112,15.22,94.219,30.43c4.318,1.392,11.993,6.665,16.334,8.081,1.662,2.174-.03.5,1.593,2.72-3.816-1.349-7.647-2.654-11.467-3.9-16.32-5.3-30.482-8.8-46.322-13.627-24.376-7.419-50.091-17.163-75.032-26.237S521.96,324.466,503.6,320.51Z" transform="translate(-116.416 91.017)" fill="#f0f0f0" opacity="0.416" style="isolation:isolate"/><ellipse cx="7.882" cy="7.882" rx="7.882" ry="7.882" transform="translate(576.304 233.416)" opacity="0.2"/><ellipse cx="5.63" cy="5.63" rx="5.63" ry="5.63" transform="translate(627.293 205.396)" opacity="0.2"/><ellipse cx="18.017" cy="18.017" rx="18.017" ry="18.017" transform="translate(558.287 181.949)" opacity="0.2"/><ellipse cx="3.775" cy="3.775" rx="3.775" ry="3.775" transform="translate(493.082 203.475)" fill="#fff"/><ellipse cx="3.775" cy="3.775" rx="3.775" ry="3.775" transform="translate(627.564 306.314)" fill="#fff"/><ellipse cx="2.161" cy="2.161" rx="2.161" ry="2.161" transform="translate(410.82 442.748)" fill="#fff"/><ellipse cx="2.524" cy="2.524" rx="2.524" ry="2.524" transform="translate(598.491 444.545)" fill="#fff"/><ellipse cx="2.524" cy="2.524" rx="2.524" ry="2.524" transform="translate(453.461 323.387)" fill="#fff"/><ellipse cx="2.524" cy="2.524" rx="2.524" ry="2.524" transform="translate(532.807 417.53)" fill="#fff"/><path d="M633.682,419.777c-.884-.579-1.8-1.162-2.735-1.718-4.374-2.591-9.235-4.61-13.985-3.227-4.979,1.448-8.16,6.187-10.842,10.625a531.1,531.1,0,0,0-37.663,75.169C585.181,486.68,589.5,462.4,604.4,446.522c2.522-2.682,5.73-5.254,9.406-5.09,2.964.129,5.509,2,8.122,3.394,6.884,3.688,14.946,4.3,22.736,4.835q16.174,1.118,32.352,2.232l.015-.171q-11.461-9.465-23.468-18.2Q643.792,426.395,633.682,419.777Z" transform="translate(-95.762 120.911)" fill="#f2f2f2"/><path d="M718.839,481.535a257.033,257.033,0,0,0-38.117-40.648c-1.134-.976-2.281-1.938-3.441-2.9q-3.718-3.065-7.528-6-8.069-6.17-16.56-11.681-5.1-3.3-10.35-6.368c-.883-.514-1.767-1.028-2.663-1.529-2.228-1.253-4.456-2.505-6.737-3.665a16.416,16.416,0,0,0-7.146-2.215c-8.662-.132-13.158,9.677-16.243,16.283q-1.444,3.125-2.94,6.223-5.617,11.767-11.681,23.31-3.738,7.139-7.634,14.187-5.538,9.987-11.378,19.777-7,11.747-14.437,23.218c-8.53,13.145-17.008,25.2-26.105,37.259h1.371q15.208-20.469,28.887-41.953Q578,486.2,588.707,466.874q5.083-9.2,9.9-18.538,3.718-7.258,7.291-14.569c.686-1.4,1.345-2.8,2-4.206,1.556-3.309,3.072-6.632,4.707-9.888,1.859-3.7,4.114-7.607,7.542-10.1a10.326,10.326,0,0,1,5.353-2.07,15.071,15.071,0,0,1,7.766,2.228q4.648,2.433,9.2,5.063A250.566,250.566,0,0,1,669.08,432.66q6.843,5.261,13.3,10.943a255.243,255.243,0,0,1,39.909,44.3c.356.5,1.187.026.831-.488Q721.027,484.448,718.839,481.535Z" transform="translate(-106.137 118.409)" fill="#f2f2f2"/><path d="M709.662,438.377a182.841,182.841,0,0,0-15.32-10.231c-2.637-1.582-5.3-3.085-8.016-4.535-.817-.435-1.648-.857-2.479-1.266a38.233,38.233,0,0,0-5.907-2.4,21.059,21.059,0,0,0-8.913-.883,23.159,23.159,0,0,0-8.227,2.848c-5.393,3.019-9.572,7.673-13.633,12.222a.489.489,0,0,0,.013.672.422.422,0,0,0,.659,0c.514-.554,1-1.121,1.516-1.674,4-4.43,8.28-8.794,13.778-11.325a19.775,19.775,0,0,1,8.372-1.938,23.8,23.8,0,0,1,8.689,1.885c1.305.527,2.584,1.121,3.85,1.754,1.437.725,2.861,1.5,4.259,2.281q3.975,2.2,7.832,4.575,7.693,4.746,14.885,10.231c1.964,1.49,3.89,3.006,5.788,4.588l.066-1.187Q713.334,441.086,709.662,438.377Z" transform="translate(-70.736 122.356)" fill="#f2f2f2"/><path d="M523.937,491.868q8.425-10.561,16.995-21.016c1.371-1.688,2.756-3.388,4.153-5.063a35.5,35.5,0,0,1,3.665-3.916,13.189,13.189,0,0,1,4.469-2.769,10.063,10.063,0,0,1,5.722-.079,66.39,66.39,0,0,1,6.329,2.189l6.421,2.347,12.908,4.72a.388.388,0,0,0,.475-.119.518.518,0,0,0-.224-.8l-3.243-1.2-13-4.746c-2.162-.791-4.311-1.6-6.474-2.373a17.622,17.622,0,0,0-6.249-1.371c-3.665.066-6.724,2.307-9.177,4.839-1.332,1.384-2.545,2.874-3.758,4.364-1.437,1.753-2.887,3.52-4.325,5.287q-8.662,10.6-17.206,21.319t-16.982,21.5q-2.789,3.58-5.551,7.159c.264.185.527.356.791.541q3.718-4.825,7.489-9.625Q515.493,502.416,523.937,491.868Z" transform="translate(-117.916 134.695)" fill="#f2f2f2"/><path d="M663.691,425.844c-4.791,2.463-8.427,6.73-13.075,9.454a299.479,299.479,0,0,1,34.073-7.952A20.849,20.849,0,0,0,663.691,425.844Z" transform="translate(-69.597 123.877)" fill="#f2f2f2"/><path d="M676.459,426.467c.456.319.9.656,1.328,1.015l-1.263-1.027Z" transform="translate(-61.368 124.755)" fill="#f2f2f2"/><path d="M553.046,462.873a10.749,10.749,0,0,0-4.547,3.8l-47.311,57.589a201.362,201.362,0,0,0,53.633-61.315Z" transform="translate(-117.183 136.353)" fill="#f2f2f2"/><path d="M623.309,811.014l-304.007.357c-.451,0-.816-.62-.816-1.384s.365-1.384.816-1.384l304.007-.357c.451,0,.816.62.816,1.384s-.365,1.384-.816,1.384Z" transform="translate(-38.544 205.428)" fill="#e6e6e6"/><ellipse cx="7.882" cy="7.882" rx="7.882" ry="7.882" transform="translate(619.35 174.067)" opacity="0.2"/><path d="M565,124.738l-1.616,1.605-1.605-1.617L560.7,125.8l1.6,1.616-1.616,1.605,1.07,1.077,1.617-1.6,1.6,1.616,1.078-1.07-1.605-1.616,1.616-1.6Z" transform="translate(-123.052 38.902)" fill="#d6d6e3"/><path d="M565.154,124.739,563.48,126.4l-1.663-1.675-1.116,1.109,1.663,1.674-1.674,1.663,1.108,1.116,1.675-1.663,1.663,1.674,1.116-1.109-1.663-1.674,1.674-1.663Z" transform="translate(-2.402 162.251)" fill="#e6e6e6"/><path d="M565.356,124.739l-1.75,1.738-1.738-1.75-1.166,1.159,1.738,1.75-1.75,1.738,1.158,1.166L563.6,128.8l1.738,1.75,1.167-1.159-1.738-1.75,1.75-1.738Z" transform="translate(-185.543 171.781)" fill="#e6e6e6"/><path d="M729.643,382.908l15.095-17.671,15.094-17.671,8.521-9.976c.471-.552-.256-1.413-.728-.861L752.531,354.4l-15.095,17.671-8.521,9.976C728.444,382.6,729.172,383.46,729.643,382.908Z" transform="translate(-272.778 -175.835)" opacity="0.8" fill="url(#a-134)"/><g transform="translate(278.174 477.759)"><path d="M441.011,527.538l-4.1,17.769s1.367,41-9.568,36.9-8.2-39.638-8.2-39.638L428.71,524.8Z" transform="translate(-285.906 -270.602)" fill="#ed9da0"/><circle cx="27.337" cy="27.337" r="27.337" transform="translate(66.945 7.49)" fill="#ed9da0"/><path d="M363.647,328.674l-2.734,39.638,34.171,4.1s0-32.8,2.734-36.9S363.647,328.674,363.647,328.674Z" transform="translate(-290.551 -286.33)" fill="#ed9da0"/><path d="M405.761,377.751l27.935.908s3.63,3.124,10.487,29.088,9.728,30.111,9.728,65.659-9.728,76.531-9.728,76.531l-20.5-2.716,8.136-73.816L418.1,424.212Z" transform="translate(-286.955 -282.394)" fill="#0a0a0f"/><path d="M328.478,385.413l-14.821,4.63s-12.5,18.63-12.487,28.2-5.4,82.014-5.4,82.014L331.363,559l10.91-28.713-21.9-36.885L338.1,448.279Z" transform="translate(-295.774 -281.78)" fill="#0a0a0f"/><path d="M428.276,510.337l-98.27-8.089S320.3,560.2,321.663,583.22s2.734,58.818,2.734,58.818l-10.935,156,42.372-5.115L361.3,663.775l17.769-70.326,20.5,89.506L413.24,798.034l36.9-3.836-12.3-139.373S448.778,529.517,428.276,510.337Z" transform="translate(-294.356 -276.858)" fill="#090814"/><path d="M431.7,784.836l11.072,3.691s23.374-6.151,17.223,9.842S436.624,811.9,436.624,811.9s-20.913,15.993-29.525,3.691l4.921-25.834Z" transform="translate(-287.466 -273.457)" fill="#090814"/><path d="M339.332,784.836l11.072,3.691s23.374-6.151,17.223,9.842S344.252,811.9,344.252,811.9s-20.913,15.993-29.525,3.691l4.921-25.834Z" transform="translate(-293.83 -273.457)" fill="#090814"/><path d="M364.782,348.3s-28.7-20.5-13.668-45.105c10.431-17.068,32.044-15.717,44.3-13.289,3.145.58,8.588-2.05,11.355,0,2.558,1.889,3.8,11.922,3.8,11.922s-2.774,7.984-10.975,7.984c-16.4,0-7.665,12.534-7.665,12.534s-12.463,4.592-9.729,14.159S364.782,348.3,364.782,348.3Z" transform="translate(-291.686 -288.473)" fill="#090814"/><path d="M441.226,380.689l-42.065-20.9s-21.158-16.3-33.55-4.223l-5.562,7.966s-49.189,19.179-49.176,34.214l19.2,75.159s-10.579,50.86,5.826,53.58c0,0,58.882,12.785,81.429,6.273s19.392-21.675,8.44-40.8l4.061-45.109Z" transform="translate(-294.564 -284.531)" fill="#0a0a0f"/></g></g></svg>
+    <div class="bloch-bg" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 440" class="hero-img" role="img" aria-label="Bloch sphere — a geometric representation of a single qubit state">
+        <defs>
+          <marker id="arr-axis" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+            <polygon points="0 0, 6 2.5, 0 5" fill="#64dcff" opacity="0.5"/>
+          </marker>
+          <marker id="arr-psi" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+            <polygon points="0 0, 6 2.5, 0 5" fill="#a78bfa"/>
+          </marker>
+        </defs>
+
+        <!-- Sphere outline -->
+        <circle cx="200" cy="215" r="148" fill="none" stroke="#64dcff" stroke-width="1.2" opacity="0.2"/>
+
+        <!-- Equatorial ellipse back (dashed) -->
+        <path d="M 52 215 A 148 46 0 0 0 348 215" fill="none" stroke="#64dcff" stroke-width="1" stroke-dasharray="3,4" opacity="0.15"/>
+
+        <!-- Equatorial ellipse front (solid) -->
+        <path d="M 52 215 A 148 46 0 0 1 348 215" fill="none" stroke="#64dcff" stroke-width="1" opacity="0.25"/>
+
+        <!-- Z axis -->
+        <line x1="200" y1="52" x2="200" y2="374" stroke="#64dcff" stroke-width="1.2" opacity="0.4" marker-end="url(#arr-axis)"/>
+
+        <!-- X axis -->
+        <line x1="200" y1="215" x2="368" y2="215" stroke="#64dcff" stroke-width="1.2" opacity="0.4" marker-end="url(#arr-axis)"/>
+
+        <!-- Y axis (projected lower-left) -->
+        <line x1="200" y1="215" x2="106" y2="278" stroke="#64dcff" stroke-width="1.2" opacity="0.4" marker-end="url(#arr-axis)"/>
+
+        <!-- θ arc from z-axis to state vector -->
+        <path d="M 200 170 A 45 45 0 0 1 236 190" fill="none" stroke="#e8eaf0" stroke-width="1" opacity="0.18"/>
+
+        <!-- φ arc on equatorial plane -->
+        <path d="M 258 215 A 58 18 0 0 0 237 233" fill="none" stroke="#64dcff" stroke-width="1" stroke-dasharray="2,3" opacity="0.22"/>
+
+        <!-- Projection line vertical from tip to equator -->
+        <line x1="290" y1="98" x2="290" y2="215" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,3" opacity="0.22"/>
+
+        <!-- Projection line horizontal from center to below tip -->
+        <line x1="200" y1="215" x2="290" y2="215" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,3" opacity="0.22"/>
+
+        <!-- State vector |ψ⟩ -->
+        <line x1="200" y1="215" x2="290" y2="98" stroke="#a78bfa" stroke-width="2" opacity="0.85" marker-end="url(#arr-psi)"/>
+
+        <!-- Glow dot at tip -->
+        <circle cx="290" cy="98" r="3.5" fill="#a78bfa" opacity="0.7"/>
+        <circle cx="290" cy="98" r="9" fill="#a78bfa" opacity="0.08"/>
+
+        <!-- Center dot -->
+        <circle cx="200" cy="215" r="2.5" fill="#64dcff" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="200" y="42" text-anchor="middle" fill="#e8eaf0" opacity="0.6" font-size="14" font-family="JetBrains Mono, monospace">|0⟩</text>
+        <text x="200" y="410" text-anchor="middle" fill="#e8eaf0" opacity="0.6" font-size="14" font-family="JetBrains Mono, monospace">|1⟩</text>
+      </svg>
     </div>
   </div>
 </section>
@@ -525,20 +614,44 @@
 
       <div class="card reveal">
         <span class="card-status">Ongoing</span>
-        <h3>Adaptive Active Space Selection in Quantum Flow Algorithms</h3>
-        <p>Replicated QFlow(4e,4o) from scratch achieving &lt;0.1 mHa error on H₆/H₈ benchmarks. Designing extensions with gradient-norm-driven active-space pruning and ADMM consensus coupling.</p>
+        <h3>Classical QFlow with TrimCI Sub-Solver for Fe₄S₄</h3>
+        <p>
+          Designing a fragmentation-based extension of QFlow for strongly correlated Fe₄S₄ systems (~7×10¹³ determinants). 
+          Built an orbital decomposition engine with overlapping fragments (12–18 orbitals) and a self-consistent coupling 
+          scheme using 1-RDM-based Coulomb and exchange dressing across fragments.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">PySCF</span>
+          <span class="tag">TrimCI</span>
+          <span class="tag purple">Quantum Chemistry</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <span class="card-status">Completed</span>
+        <h3>QFlow Algorithm Replication & Validation</h3>
+        <p>
+          Built a full QFlow(4e,4o) implementation from primary literature with CAS basis construction, effective Hamiltonian 
+          dressing, and commutator-gradient optimization. Achieved &lt;0.1 mHa agreement with published H₆/H₈ benchmarks and 
+          recovered &gt;97% correlation energy.
+        </p>
         <div class="card-tags">
           <span class="tag">Python</span>
           <span class="tag">PySCF</span>
           <span class="tag">PennyLane</span>
-          <span class="tag purple">Quantum Chemistry</span>
+          <span class="tag purple">Quantum Algorithms</span>
         </div>
       </div>
 
       <div class="card reveal">
         <span class="card-status">Ongoing</span>
         <h3>HGQA: Hybrid Quantum-Classical EVCS Optimizer</h3>
-        <p>Six-term QUBO formulation with a three-tier cell pruner reducing qubit count 50–99% pre-QAOA. MPS-based simulation scaling to 80–100+ qubits.</p>
+        <p>
+          Developed a six-term QUBO formulation with Chebyshev-distance constraints and a three-tier pruning pipeline reducing 
+          qubit count by 50–99%. Scaled QAOA simulations to 80–100+ qubits using MPS methods and corrected large identity offsets 
+          to restore optimization signal.
+        </p>
         <div class="card-tags">
           <span class="tag">Qiskit</span>
           <span class="tag">QAOA</span>
@@ -550,45 +663,40 @@
 
       <div class="card reveal">
         <span class="card-status completed">Completed</span>
-        <h3>Neutral-Atom Quantum Processor Simulator</h3>
-        <p>Pulse-level simulator with four-level atomic model under Lindblad master equation. Validated via randomized benchmarking and interleaved RB.</p>
-        <div class="card-tags">
-          <span class="tag">QuTiP</span>
-          <span class="tag">Qiskit</span>
-          <span class="tag">Python</span>
-          <span class="tag purple">Hardware Sim</span>
-        </div>
-      </div>
-
-      <div class="card reveal">
-        <span class="card-status completed">Completed</span>
         <h3>Zero-Noise Extrapolation with Randomized Benchmarking</h3>
-        <p>Unified RB+ZNE protocol for superconducting qubits at Qolab (co-founded by John M. Martinis). Digital Clifford folding for X/Y gates and analog pulse stretching for Z rotations.</p>
+        <p>
+          Designed a unified RB+ZNE protocol for superconducting qubits with gate-specific noise scaling. Extracted zero-noise 
+          fidelities (f₀(X) ≈ 0.9997, f₀(Z) ≈ 0.9983) and established fidelity hierarchy between microwave and flux-based gates.
+        </p>
         <div class="card-tags">
           <span class="tag">QUA</span>
           <span class="tag">Python</span>
           <span class="tag purple">Error Mitigation</span>
         </div>
-        <a href="https://github.com/Abhi-Muvva/RB_ZNE" target="_blank" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
         <span class="card-status completed">Completed</span>
-        <h3>QML Encoding Trade-offs in Qrisp</h3>
-        <p>Systematic comparison of QuantumFloat, angle, and amplitude encodings on Iris dataset. Built centroid-based and kNN quantum classifiers to benchmark practical encoding efficiency.</p>
+        <h3>Neutral-Atom Quantum Processor Simulator</h3>
+        <p>
+          Built a pulse-level simulator using a four-level atomic model under Lindblad evolution, including Rydberg blockade 
+          dynamics. Implemented calibrated RX, RZ, CZ gates and validated via randomized benchmarking workflows.
+        </p>
         <div class="card-tags">
-          <span class="tag">Qrisp</span>
+          <span class="tag">QuTiP</span>
           <span class="tag">Qiskit</span>
-          <span class="tag">PennyLane</span>
-          <span class="tag purple">QML</span>
+          <span class="tag">Python</span>
+          <span class="tag purple">Hardware Simulation</span>
         </div>
-        <a href="https://github.com/Abhi-Muvva/qrisp-quantumfloat-evaluation" target="_blank" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
         <span class="card-status completed">Completed</span>
         <h3>WISQ Compiler Enhancement</h3>
-        <p>Verification and resource estimation modules for circuit correctness. Hellinger fidelity validation and T-gate cost analysis via Qsharp-Estimator.</p>
+        <p>
+          Developed fidelity verification and resource estimation modules, achieving 30% T-state reduction and 25% logical-depth 
+          improvement. Integrated Q#-Estimator for automated benchmarking across optimized circuits.
+        </p>
         <div class="card-tags">
           <span class="tag">Qiskit</span>
           <span class="tag">Q#</span>
@@ -711,23 +819,6 @@
   </div>
 </section>
 
-<!-- Publications -->
-<section id="publications">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">Publications</div>
-      <h2 class="section-title">Writing</h2>
-    </div>
-    <div class="card reveal" style="max-width: 600px;">
-      <h3>Weather Prediction Using Machine Learning Techniques</h3>
-      <p><em>International Journal of Scientific Research in Engineering and Management (IJSREM)</em>, 8(1), Jan. 2024.</p>
-      <div class="card-tags" style="margin-top: 12px;">
-        <span class="tag purple">Published</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- Contact -->
 <section id="contact">
   <div class="container">
@@ -737,26 +828,41 @@
     </div>
     <div class="contact-row reveal">
       <a href="mailto:muvvabhi@gmail.com" class="contact-link">
-        <span class="icon">✉</span> muvvabhi@gmail.com
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        muvvabhi@gmail.com
       </a>
       <a href="tel:+12398515807" class="contact-link">
-        <span class="icon">☎</span> 239-851-5807
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.64 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+        </span>
+        239-851-5807
       </a>
-      <a href="https://github.com/Abhi-Muvva" class="contact-link" target="_blank">
-        <span class="icon">⟐</span> GitHub
+      <a href="https://github.com/Abhi-Muvva" class="contact-link" target="_blank" rel="noopener noreferrer">
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </span>
+        GitHub
       </a>
-      <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="contact-link" target="_blank">
-        <span class="icon">◈</span> LinkedIn
+      <a href="https://www.linkedin.com/in/abhimuvva/" class="contact-link" target="_blank" rel="noopener noreferrer">
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </span>
+        LinkedIn
       </a>
     </div>
   </div>
 </section>
+
+</main>
 
 <footer>
   <div class="container">Built by Abhi Muvva · 2026</div>
 </footer>
 
 <script>
+  // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
@@ -767,6 +873,76 @@
     });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
+
+  // Bloch sphere — scroll-driven mask + transform
+  const blochBg = document.querySelector('.bloch-bg');
+
+  if (blochBg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const feather = 18;
+
+    function updateBloch() {
+      const totalScrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const p = totalScrollable > 0 ? Math.min(window.scrollY / totalScrollable, 1) : 0;
+
+      // Vertical mask — south (|1⟩) → full → north (|0⟩)
+      // Phase 1 (p 0→0.5): south half expands to full circle
+      //   leftCut: 90° → 0°,  rightCut: 270° → 360°
+      // Phase 2 (p 0.5→1): transparent band grows in the south
+      //   southStart: 180° → 90°,  southEnd: 180° → 270°
+      let mask;
+      if (p <= 0.5) {
+        const leftCut  = 90 * (1 - 2 * p);       // 90 → 0
+        const rightCut = 270 + 90 * (2 * p);      // 270 → 360
+        if (leftCut <= 0) {
+          mask = 'conic-gradient(from 0deg at 50% 49%, black 0deg, black 360deg)';
+        } else {
+          mask = `conic-gradient(from 0deg at 50% 49%,
+            transparent ${leftCut - feather}deg,
+            black ${leftCut}deg,
+            black ${rightCut}deg,
+            transparent ${Math.min(rightCut + feather, 359)}deg)`;
+        }
+      } else {
+        const t = (p - 0.5) * 2;                  // 0 → 1
+        const southStart = 180 - 90 * t;           // 180 → 90
+        const southEnd   = 180 + 90 * t;           // 180 → 270
+        mask = `conic-gradient(from 0deg at 50% 49%,
+          black 0deg,
+          black ${southStart - feather}deg,
+          transparent ${southStart}deg,
+          transparent ${southEnd}deg,
+          black ${southEnd + feather}deg,
+          black 360deg)`;
+      }
+
+      // Scale — bell curve: 0.88 → 1.08 → 0.88
+      const scale = 0.88 + 0.20 * Math.sin(p * Math.PI);
+
+      // Translation — top-right → bottom-right
+      const ty = p * 550;
+
+      blochBg.style.transform = `translateY(${ty}px) scale(${scale})`;
+      blochBg.style.maskImage = mask;
+      blochBg.style.webkitMaskImage = mask;
+    }
+
+    window.addEventListener('scroll', updateBloch, { passive: true });
+    updateBloch(); // initialize on load
+  }
+  // Card mouse-tracking gradient glow
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mouse-x', `${x}%`);
+      card.style.setProperty('--mouse-y', `${y}%`);
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--mouse-x', '50%');
+      card.style.setProperty('--mouse-y', '50%');
+    });
+  });
 </script>
 
 </body>
