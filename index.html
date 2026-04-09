@@ -933,7 +933,7 @@
       const scale = 0.88 + 0.20 * Math.sin(p * Math.PI);
 
       // Translation — top-right → bottom-right
-      const ty = p * 550;
+      const ty = p * (window.innerHeight - 60);
 
       blochBg.style.transform = `translateY(${ty}px) scale(${scale})`;
       blochBg.style.maskImage = mask;
