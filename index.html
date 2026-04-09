@@ -98,6 +98,12 @@
     font-size: 1.05rem;
     color: var(--accent);
     letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .nav-logo-thin {
+    color: var(--text-primary);
+    font-weight: 400;
+    font-size: 0.82rem;
   }
   .nav-links { display: flex; gap: 28px; }
   .nav-links a {
@@ -531,7 +537,7 @@
 <!-- Nav -->
 <nav aria-label="Primary navigation">
   <div class="container">
-    <div class="nav-logo">AM</div>
+    <div class="nav-logo"><span>A</span><span class="nav-logo-thin">bhi</span><span>M</span><span class="nav-logo-thin">uvva</span></div>
     <div class="nav-links">
       <a href="#projects">Projects</a>
       <a href="#experience">Experience</a>
@@ -933,7 +939,7 @@
       const scale = 0.88 + 0.20 * Math.sin(p * Math.PI);
 
       // Translation — top-right → bottom-right
-      const ty = p * (window.innerHeight - 60);
+      const ty = p * (window.innerHeight - 180);
 
       blochBg.style.transform = `translateY(${ty}px) scale(${scale})`;
       blochBg.style.maskImage = mask;
@@ -949,22 +955,42 @@
     const sectionIds = Array.from(navLinks).map(a => a.getAttribute('href').slice(1));
     const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
 
+    let clickOverride = -1; // index pinned by a nav click; cleared on next scroll
+
     function getActiveSection() {
-      const mid = window.innerHeight * 0.4; // trigger at 40% from top
-      // Walk from bottom to top; first section whose top is above the trigger wins
+      // Near bottom of page → last section
+      const atBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 4;
+      if (atBottom) return sections.length - 1;
+
+      const mid = window.innerHeight * 0.4;
       for (let i = sections.length - 1; i >= 0; i--) {
         if (sections[i].getBoundingClientRect().top <= mid) return i;
       }
-      return 0; // above all sections → first item
+      return 0;
+    }
+
+    function setActive(idx) {
+      navLinks.forEach((a, i) => a.classList.toggle('active', i === idx));
     }
 
     let lastActive = -1;
     function updateNav() {
+      // Clear click override once the user actually scrolls
+      clickOverride = -1;
       const idx = getActiveSection();
       if (idx === lastActive) return;
       lastActive = idx;
-      navLinks.forEach((a, i) => a.classList.toggle('active', i === idx));
+      setActive(idx);
     }
+
+    // Click: pin active immediately, let scroll detection take over afterward
+    navLinks.forEach((link, i) => {
+      link.addEventListener('click', () => {
+        clickOverride = i;
+        lastActive = i;
+        setActive(i);
+      });
+    });
 
     window.addEventListener('scroll', updateNav, { passive: true });
     updateNav(); // set on load
