@@ -110,6 +110,20 @@
     transition: color 0.25s;
   }
   .nav-links a:hover { color: var(--accent); }
+  .nav-links a.active {
+    color: var(--accent);
+    position: relative;
+  }
+  .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+  }
 
   /* Hero */
   .hero {
@@ -929,6 +943,33 @@
     window.addEventListener('scroll', updateBloch, { passive: true });
     updateBloch(); // initialize on load
   }
+  // Scrollspy — highlight active nav section
+  (function () {
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    const sectionIds = Array.from(navLinks).map(a => a.getAttribute('href').slice(1));
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    function getActiveSection() {
+      const mid = window.innerHeight * 0.4; // trigger at 40% from top
+      // Walk from bottom to top; first section whose top is above the trigger wins
+      for (let i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].getBoundingClientRect().top <= mid) return i;
+      }
+      return 0; // above all sections → first item
+    }
+
+    let lastActive = -1;
+    function updateNav() {
+      const idx = getActiveSection();
+      if (idx === lastActive) return;
+      lastActive = idx;
+      navLinks.forEach((a, i) => a.classList.toggle('active', i === idx));
+    }
+
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav(); // set on load
+  })();
+
   // Card mouse-tracking gradient glow
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('mousemove', e => {
