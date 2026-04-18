@@ -208,7 +208,7 @@
     top: -300px;
     right: -200px;
     width: 720px;
-    opacity: 0.15;
+    opacity: 0.08;
     pointer-events: none;
     z-index: 0;
     will-change: transform;
@@ -646,6 +646,7 @@
           <span class="tag">TrimCI</span>
           <span class="tag purple">Quantum Chemistry</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/TrimCI_Flow/tree/main" target="_blank" rel="noopener noreferrer" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -662,6 +663,7 @@
           <span class="tag">PennyLane</span>
           <span class="tag purple">Quantum Algorithms</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/qflow" target="_blank" rel="noopener noreferrer" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -693,6 +695,7 @@
           <span class="tag">Python</span>
           <span class="tag purple">Error Mitigation</span>
         </div>
+        <a href="https://github.com/Abhi-Muvva/RB_ZNE" target="_blank" rel="noopener noreferrer" class="card-repo">View Repo →</a>
       </div>
 
       <div class="card reveal">
@@ -939,8 +942,7 @@
       const scale = 0.88 + 0.20 * Math.sin(p * Math.PI);
 
       // Translation — top-right → bottom-right
-      const baseOffset = -10; // adjust this if needed
-      const ty = baseOffset + p * (window.innerHeight - 180);
+      const ty = p * (window.innerHeight - 180);
 
       blochBg.style.transform = `translateY(${ty}px) scale(${scale})`;
       blochBg.style.maskImage = mask;
